@@ -3,7 +3,7 @@ import numpy as np
 from pHcalc import System
 
 
-def generate_sillen(acids, names, acids_names, pHbar, labels):
+def generate_sillen(acids, names, acids_names, pHbar, labels, pKabar):
     # initialize pH for plotting
     pHs = np.linspace(0, 14, 1000)
     conc_H = -pHs
@@ -43,14 +43,21 @@ def generate_sillen(acids, names, acids_names, pHbar, labels):
         # separate different regions
         # for region in conc_acid[:]
         for ri in range(regions):
-            ax.plot(
-                pHs,
-                conc_acid[:, ri],
-                color="C%s" % (i + 1),
-                alpha=0.2 + 0.8 * (ri / regions),
-            )
             if labels:
-                ax.plot(label=names[i] + "_" + str(ri))
+                ax.plot(
+                    pHs,
+                    conc_acid[:, ri],
+                    color="C%s" % (i + 1),
+                    alpha=0.2 + 0.8 * (ri / regions),
+                    label=names[i] + "_" + str(ri),
+                )
+            else:
+                ax.plot(
+                    pHs,
+                    conc_acid[:, ri],
+                    color="C%s" % (i + 1),
+                    alpha=0.2 + 0.8 * (ri / regions),
+                )
 
     # plot the pH of the system if pHbar is true
     if pHbar:
@@ -59,9 +66,10 @@ def generate_sillen(acids, names, acids_names, pHbar, labels):
         plt.axvline(x=system.pH, linestyle="dashed", color="red")
         ax.annotate("pH= " + str(round(system.pH, 1)), xy=(system.pH + 0.5, -0.5))
 
-    for acid in acids:
-        for pKa in acid.pKa:
-            plt.axvline(x=pKa, linestyle="dashed", color="blue")
+    if pKabar:
+        for acid in acids:
+            for pKa in acid.pKa:
+                plt.axvline(x=pKa, linestyle="dashed", color="blue")
 
     ax.legend()
 
